@@ -25,5 +25,5 @@ npm run test
 npm run lint
 ```
 
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+### 参考地址
+1、 [尝鲜 vue3.x 新特性 - CompositionAPI](https://www.bbsmax.com/A/D854PGx65E/)
