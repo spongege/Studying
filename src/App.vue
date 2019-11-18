@@ -15,6 +15,9 @@
     <button @click="increment">click</button><br />
     <input type="text" v-model="keywords" />
     <h3 ref="h3Ref">TemplateRefOne</h3>
+    <base-input></base-input>
+    <base-Button></base-Button>
+    <base-click></base-click>
   </div>
 </template>
 
@@ -46,7 +49,7 @@ export default {
     onMounted(() => {
       // 为 dom 元素设置字体颜色
       // h3Ref.value 是原生DOM对象
-      console.log(h3Ref.value)  // 可以直接获取到DOM，h3Ref.value 相当于2.x的 this.$refs.h3Ref
+      console.log(h3Ref.value) // 可以直接获取到DOM，h3Ref.value 相当于2.x的 this.$refs.h3Ref
     })
     // ---------------------------------------------
     // reactive state
