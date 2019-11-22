@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>刘醒</title>
+    <style>
+      .messageBox {
+        width: 500px;
+        min-height: 400px;
+        padding: 15px;
+        border: 1px solid #ccc;
+      }
+      .messageBox .fr {
+        text-align: right;
+      }
+      .messageBox li {
+        line-height: 30px;
+        list-style: none;
+      }
+    </style>
+  </head>
+  <body>
+    <h3>刘醒</h3>
+    <div>
+      <input type="text" class="input" />
+      <input type="button" value="发送" class="btn" />
+    </div>
+    <h3>消息框</h3>
+    <ul class="messageBox"></ul>
+    <script>
+      window.onload = () => {
+        const input = document.querySelector('.input')
+        const btn = document.querySelector('.btn')
+        const ul = document.querySelector('.messageBox')
+        let ws = null
+
+        const message = {
+          from: 'lx',
+          to: 'lff',
+          type: 'open', // 初始连接时标识会话
+          word: ''
+        }
+
+        btn.addEventListener('click', () => {
+          let msg = Object.assign(message, { word: input.value, type: 'text' })
+          ws.send(JSON.stringify(msg))
+          ul.innerHTML += `<li class="fl">刘醒：${input.value}</li>`
+          input.value = ''
+        })
+
+        const connect = () => {
+          ws = new WebSocket('ws://localhost:9000')
+          // 监听连接成功
+          ws.onopen = () => {
+            // 发送消息
+            ws.send(JSON.stringify(message))
+            console.log('连接服务端websocket成功')
+          }
+          // 监听服务端消息(接收消息)
+          ws.onmessage = msg => {
+            let message = JSON.parse(msg.data)
+            console.log('收到的消息：', message)
+            ul.innerHTML += `<li class="fr">梁非凡：${message.word}</li>`
+          }
+
+          // 监听连接失败
+          ws.onerror = () => {
+            console.log('连接失败，正在重连...')
+            connect()
+          }
+
+          // 监听连接关闭
+          ws.onclose = () => {
+            console.log('连接关闭')
+          }
+        }
+        connect()
+      }
+    </script>
+  </body>
+</html>
