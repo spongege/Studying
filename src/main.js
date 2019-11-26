@@ -3,6 +3,7 @@ import App from './App.vue'
 import VueCompositionApi from '@vue/composition-api'
 import './components/global.js'
 import '@/icons/index'
+import './lib/reset.css'
 
 Vue.use(VueCompositionApi)
 
