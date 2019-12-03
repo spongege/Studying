@@ -49,7 +49,7 @@
  * @Author: feng.zhonghui
  * @Date: 2018-12-03 10:58:30
  * @Last Modified by: feng.zhonghui
- * @Last Modified time: 2019-11-21 16:20:49
+ * @Last Modified time: 2019-12-03 16:47:10
  * @des: vue上拉加载下拉刷新组件。
  * @eg: <infinite-box :downRefresh="refresh"
                       :upLoading="refresh">
@@ -181,7 +181,7 @@ export default {
     }
   },
   watch: {
-    state(newVal, olaVal) {
+    state(newVal) {
       console.log(newVal)
       if (this.slideDirection === 'down') {
         this.$emit('topChange', newVal) // 顶部文本变化触发
@@ -331,11 +331,11 @@ export default {
         this.hideTips = true // 取消拉动的时候也要把hideTips设置为true
       }
     },
-    handleScroll(e) {
+    handleScroll() {
       // 触发的滚动事件
       this.$emit('scrolling')
     },
-    handleScrollEnd(e) {
+    handleScrollEnd() {
       // 触发的触底事件
       if (
         this.scrollDom.scrollTop + this.scrollDom.offsetHeight + 1 >=
