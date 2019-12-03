@@ -37,7 +37,7 @@ export default {
   data() {
     return {
       slidesLength: 1,
-      __width: 0,
+      theWidth: 0,
       auto: true,
       slideing: true,
       timer: '',
@@ -82,7 +82,7 @@ export default {
     this.className = `swiper_${Math.random().toFixed(3) * 1000}`
     setTimeout(() => {
       this.starDom()
-      this.dom.transform = `translate3d(${this.__width * -1}px, 0px, 0px)`
+      this.dom.transform = `translate3d(${this.theWidth * -1}px, 0px, 0px)`
       if (this.autoPlay) {
         this.setTime()
       }
@@ -108,8 +108,8 @@ export default {
         this.clearTimeOut()
         this.setTransform(this.slide.m + this.slide.wl)
         var x = this.getTransform()
-        x += this.slide.m > 0 ? this.__width * 0.3 : this.__width * -0.3
-        this.index = Math.round(x / this.__width) * -1
+        x += this.slide.m > 0 ? this.theWidth * 0.3 : this.theWidth * -0.3
+        this.index = Math.round(x / this.theWidth) * -1
         this.wh('touch')
       }
     },
@@ -148,7 +148,7 @@ export default {
     wh(type) {
       this.slideing = false
       this.dom.transition = type == 'touch' ? '250ms' : this.duration + 'ms'
-      this.setTransform(this.index * -1 * this.__width)
+      this.setTransform(this.index * -1 * this.theWidth)
       this.slide.m = 0
       this.slide.s = -1 //保证下次重新赋值
       if (this.autoPlay) {
@@ -159,11 +159,11 @@ export default {
         this.dom.transition = '0s'
         if (this.index >= this.slidesLength + 1) {
           this.index = 1
-          this.setTransform(this.index * -1 * this.__width)
+          this.setTransform(this.index * -1 * this.theWidth)
         }
         if (this.index <= 0) {
           this.index = this.slidesLength
-          this.setTransform(this.index * -1 * this.__width)
+          this.setTransform(this.index * -1 * this.theWidth)
         }
         this.$emit('transtionend', this.index - 1)
         this.auto = true
@@ -192,7 +192,7 @@ export default {
           .querySelector('.' + this.className)
           .insertBefore(cloneDom2, SlideDom[0])
         document.querySelector('.' + this.className).appendChild(cloneDom1)
-        this.__width = document.querySelector('.' + this.className).offsetWidth
+        this.theWidth = document.querySelector('.' + this.className).offsetWidth
         this.dom = document.querySelector('.' + this.className).style
       }
     },
