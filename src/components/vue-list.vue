@@ -57,7 +57,6 @@ export default {
   },
   methods: {
     initData() {
-      // init all data
       this._rowsInWindow = Math.ceil(this.$el.offsetHeight / this.height)
       this._above = this._rowsInWindow * 2
       this._below = this._rowsInWindow
@@ -65,67 +64,49 @@ export default {
     },
     handleScroll() {
       let _scrollTop = this.$el.scrollTop,
-        _height = this.$el.querySelectorAll('ul')[0].offsetHeight,
-        _contentHeight = this.$el.offsetHeight
-      // Counts the number of rows on the current screen
-      if (
-        _scrollTop / this.height - Math.floor(_scrollTop / this.height) >
-        0.5
-      ) {
-        this.displayCount = Math.ceil(_scrollTop / this.height)
-      } else {
-        this.displayCount = Math.floor(_scrollTop / this.height)
-      }
-      // if the maximum height is exceeded, reset the previewList
+        _height = this.$el.querySelectorAll('ul')[0].offsetHeight, // ul高度
+        _contentHeight = this.$el.offsetHeight // 视口高度
+      this.displayCount =
+        _scrollTop / this.height - Math.ceil(_scrollTop / this.height) > 0.5
+          ? Math.ceil(_scrollTop / this.height)
+          : Math.floor(_scrollTop / this.height)
+      // 每次滚动距离超过_max，就要重组数据（_max = 视口的items数 * item高度）
       if (
         this.lastScrollTop === null ||
         Math.abs(_scrollTop - this.lastScrollTop) > this._max
       ) {
         this.lastScrollTop = _scrollTop
+        let _from = parseInt(_scrollTop / this.height) - this._above
+        _from < 0 && (_from = 0)
+        let _to = _from + this._rowsInWindow * 4
+        _to > this.list.length && (_to = this.list.length)
+
+        this.from = _from
+        this.to = _to
+
+        this.lineTopHeight = _from * this.height
+        this.lineBottomHeight = (this.list.length - _to) * this.height
+
+        typeof this.dispatchData === 'function' && this.dispatchData(this)
+
+        this.resetPreviewList(_from, _to)
       } else {
         if (
           this.to === this.list.length &&
-          _height - _scrollTop - _contentHeight < this.distance
+          _height - _contentHeight - _scrollTop < this.distance
         ) {
           this.canScroll && this.loadmore(this.from, this.to)
         }
-        return
       }
-      // get from and to count
-      let _from = parseInt(_scrollTop / this.height) - this._above
-      if (_from < 0) {
-        _from = 0
-      }
-      let _to = _from + this._above + this._below + this._rowsInWindow
-      if (_to > this.list.length) {
-        _to = this.list.length
-      }
-      this.from = _from
-      this.to = _to
-      // set top height and bottom height
-      this.lineTopHeight = _from * this.height
-      this.lineBottomHeight = (this.list.length - _to) * this.height
-      // dispatch data
-      if (typeof this.dispatchData === 'function') {
-        this.dispatchData(this)
-      }
-      this.resetPreviewList(_from, _to)
-      this.$nextTick(() => {
-        let _scrollTop = this.$el.scrollTop,
-          _height = this.$el.querySelectorAll('ul')[0].offsetHeight,
-          _contentHeight = this.$el.offsetHeight
-        if (
-          _to === this.list.length &&
-          _height - _scrollTop - _contentHeight < 0
-        ) {
-          this.canScroll && this.loadmore(this.from, this.to)
-        }
-      })
+    },
+    resetPreviewList(from, to) {
+      this.previewList = []
+      this.previewList = this.list.slice(from, to)
     },
     loadmore(from, to) {
       if (!this.canLoadmore) return
       this.canLoadmore = false
-      // fetch mock
+
       setTimeout(() => {
         for (var i = 0; i < 200; i++) {
           this.list.push({
@@ -137,15 +118,9 @@ export default {
         this.resetPreviewList(_from, _to)
         this.lineBottomHeight = (this.list.length - _to) * this.height
         this.handleScroll()
+
         this.canLoadmore = true
-      }, 2000)
-    },
-    resetPreviewList(from, to) {
-      // reset previewList
-      this.previewList = []
-      for (; from < to; from++) {
-        this.previewList.push(this.list[from])
-      }
+      }, 1000)
     }
   },
   components: {}
