@@ -15,7 +15,6 @@
     <button @click="increment">click</button><br />
     <input type="text" v-model="keywords" />
     <h3 ref="h3Ref">TemplateRefOne</h3>
-    <base-Button></base-Button>
     <base-click></base-click>
     <base-svg :iconName="'qq'" :color="'#939'"></base-svg>
     <base-svg :iconName="'wx'"></base-svg>

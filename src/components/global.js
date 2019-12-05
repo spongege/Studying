@@ -21,7 +21,11 @@ requireComponent.keys().forEach(fileName => {
         .replace(/\.\w+$/, '')
     )
   )
-  console.log(componentName)
+  console.log(
+    '%c%s',
+    'padding: 2px 4px;background: brown;color: white;border-radius: 2px;',
+    componentName
+  )
   // 全局注册组件
   Vue.component(
     componentName,

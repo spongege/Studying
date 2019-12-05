@@ -4,7 +4,7 @@ import VueCompositionApi from '@vue/composition-api'
 import router from './router'
 import './components/global.js'
 import '@/icons/index'
-import './lib/reset.css'
+// import './lib/reset.css'
 
 Vue.use(VueCompositionApi)
 
