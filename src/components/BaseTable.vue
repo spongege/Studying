@@ -12,6 +12,7 @@
         <thead>
           <tr>
             <th v-for="col in columns" :key="col.key">
+              <div>1</div>
               <div>
                 <template v-if="col.type === 'selection'">
                   <input

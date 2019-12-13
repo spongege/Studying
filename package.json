@@ -12,6 +12,7 @@
     "core-js": "^3.3.2",
     "less": "^3.10.3",
     "less-loader": "^5.0.0",
+    "ua-parser-js": "^0.7.20",
     "vue": "^2.6.10",
     "vue-router": "^3.1.3"
   },
