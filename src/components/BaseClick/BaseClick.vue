@@ -1,7 +1,15 @@
-<template> <div>Click</div></template>
+<template>
+  <div @click="$emit('modelClick', Date.now())">Click+{{ model }}</div>
+</template>
 
 <script>
-export default {}
+export default {
+  model: {
+    prop: 'model',
+    event: 'modelClick'
+  },
+  props: ['model']
+}
 </script>
 
 <style></style>

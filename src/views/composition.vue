@@ -15,7 +15,8 @@
     <button @click="increment">click</button><br />
     <input type="text" v-model="keywords" />
     <h3 ref="h3Ref">TemplateRefOne</h3>
-    <base-click></base-click>
+    <base-click v-model="model"></base-click>
+    {{model}}
     <base-svg :iconName="'qq'" :color="'#939'"></base-svg>
     <base-svg :iconName="'wx'"></base-svg>
   </div>
@@ -42,6 +43,7 @@ export default {
     // ref state
     const count = ref(0)
     const test = ref(0)
+    const model = ref('v-model')
     // 通过 ref() 还可以引用页面上的元素或组件
     // 创建一个 DOM 引用
     const h3Ref = ref(null)
@@ -148,6 +150,7 @@ export default {
     return {
       // ...data, // 直接不包装到导出去不具备响应式，试图不会跟随变化
       ...toRefs(data),
+      model,
       test,
       cptTest,
       h3Ref, // 把创建的DOM引用 return 出去
