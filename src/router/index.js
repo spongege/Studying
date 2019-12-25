@@ -4,6 +4,7 @@ import VueRouter from 'vue-router'
 const Composition = () => import('@/views/composition.vue')
 const ListView = () => import('@/views/listview.vue')
 const Table = () => import('@/views/table.vue')
+const Wave = () => import('@/views/wave.vue')
 Vue.use(VueRouter)
 
 var routes = [
@@ -21,6 +22,11 @@ var routes = [
     path: '/table',
     name: 'table',
     component: Table
+  },
+  {
+    path: '/wave',
+    name: 'wave',
+    component: Wave
   }
 ]
 
