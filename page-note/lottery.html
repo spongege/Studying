@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>抽奖 lottery</title>
+    <style>
+      /* 用于移动端 */
+      * {
+        padding: 0;
+        margin: 0;
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        background-color: #fff;
+        color: #333;
+        font-family: 'Helvetica Neue', Helvetica, sans-serif;
+        /* 禁用系统长按菜单 */
+        -webkit-touch-callout: none;
+        /* 禁用字体大小自动调整 */
+        -webkit-text-size-adjust: none !important;
+        /* 去掉点击高亮 */
+        -webkit-tap-highlight-color: transparent;
+        /* ios滚动设置 */
+        -webkit-overflow-scrolling: touch;
+      }
+      .flex {
+        display: flex;
+        flex-wrap: wrap;
+      }
+      /* 页面结构处理 */
+      .page {
+        width: 100%;
+        min-height: 100vh;
+        overflow: hidden;
+        margin: 0 auto;
+        max-width: 680px;
+      }
+      .box {
+        width: 100%;
+      }
+      .box .item {
+        min-width: 31%;
+        margin: 0 auto 2%;
+        padding: 10% 0;
+        background-color: saddlebrown;
+        color: #fff;
+        font-size: 32px;
+        font-weight: bold;
+        text-align: center;
+        transition: 0.2s all;
+      }
+      .box .item-active {
+        background-color: rgba(255, 99, 71, 0.6);
+      }
+      .box .center {
+        cursor: pointer;
+        -webkit-user-select: none;
+      }
+      .box .center:active {
+        transform: scale(0.9);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="page">
+      <div class="box flex">
+        <div class="item">1</div>
+        <div class="item">2</div>
+        <div class="item">3</div>
+        <div class="item">8</div>
+        <div class="item center">srart</div>
+        <div class="item">4</div>
+        <div class="item">7</div>
+        <div class="item">6</div>
+        <div class="item">5</div>
+      </div>
+    </div>
+
+    <script>
+      ;(function() {
+        const content = document.querySelector('.box')
+        const activeClassName = 'item-active'
+        /* 动画进行列表，旋转一周对应的 块 的下标*/
+        const list = [0, 1, 2, 5, 8, 7, 6, 3]
+        /* 概率列表（加起来必须是100）对应上面 */
+        const rangeList = [10, 10, 10, 10, 10, 10, 20, 20]
+        /* 最高延迟毫秒 */
+        const maxTime = 200
+        /* 最低延迟毫秒 */
+        const minTime = 100
+        /* 圈数 */
+        let circleTotal = 3
+        /* 每一次减少的毫秒间隔 */
+        let intervalReduce = 5
+        /* 动画进行状态 */
+        let move = false
+        /* 动画闪烁索引 */
+        let index = 0
+        /* 定时器间隔 */
+        let interval = 0
+        /* 最终结果索引 */
+        let pointIndex = 0
+        /* 闪烁个数，每次闪烁 count === list.length 才算转完一圈 */
+        let count = 0
+
+        /* 获取概率索引 */
+        function getRangeIndex() {
+          /* 抽奖概率范围 */
+          const range = parseInt(100 * Math.random()) + 1
+          /* 单个概率 */
+          let rate = 0
+          for (let i = 0; i < rangeList.length; i++) {
+            const number = rangeList[i]
+            rate += number
+            /* 抽奖范围小于等于累加概率时返回i */
+            if (range <= rate) {
+              console.log(`概率:${rangeList[i]}% 块数:${i + 1}`)
+              return i
+            }
+          }
+        }
+        /* `item`闪烁到下一个 */
+        function next() {
+          // const beforeIndex = index > 0 ? index - 1 : list.length - 1
+          const beforeIndex = (index + list.length - 1) % list.length
+          content.children[list[beforeIndex]].classList.remove(activeClassName)
+          content.children[list[index]].classList.add(activeClassName)
+          if (circleTotal > 0 || index != pointIndex) {
+            index++
+            count++
+            if (index > list.length - 1) {
+              index = 0
+            }
+            if (count == list.length) {
+              count = 0
+              circleTotal--
+              // console.count('圈数');
+            }
+            interval -= intervalReduce
+            // console.log(interval);
+            setTimeout(next, interval)
+          } else {
+            move = false
+          }
+        }
+
+        /* 点击开始 */
+        function start() {
+          if (move) return
+          move = true
+          count = 0
+          circleTotal = 3
+          pointIndex = getRangeIndex()
+          intervalReduce = Math.floor(
+            (maxTime - minTime) / (circleTotal * list.length)
+          )
+          interval = maxTime
+          next()
+        }
+
+        // 添加点击事件
+        content.children[4].addEventListener('click', start)
+      })()
+    </script>
+  </body>
+</html>
