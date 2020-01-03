@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>css</title>
+    <style>
+      @import url('https://fonts.googleapis.com/css?family=Raleway:400,400i,700');
+      @import url(https://fonts.googleapis.com/css?family=Lato);
+      :root {
+        --fill-color: #198ce6;
+        --highlight-text-color: #00acf0;
+      }
+      * {
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        display: flex;
+        min-height: 100vh;
+        justify-content: center;
+        align-items: center;
+        background: #222;
+        flex-direction: column;
+      }
+      body > * {
+        margin: 20px;
+      }
+      /* shine button */
+      .btn {
+        position: relative;
+        padding: 20px 30px;
+        font-size: 20px;
+        line-height: 1.5;
+        color: white;
+        text-decoration: none;
+        text-transform: uppercase;
+        background-color: transparent;
+        border: 1px solid rgb(0, 174, 209);
+        outline: transparent;
+        cursor: pointer;
+        user-select: none;
+        white-space: nowrap;
+        transition: 0.25s;
+        overflow: hidden;
+      }
+      .btn:hover {
+        box-shadow: 0 0 20px 10px rgba(0, 174, 209, 0.5);
+      }
+      .btn::before {
+        position: absolute;
+        content: '';
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(
+          120deg,
+          transparent,
+          rgba(0, 174, 209, 0.5),
+          transparent
+        );
+        transform: translateX(-100%);
+        transition: 0.6s;
+      }
+      .btn:hover::before {
+        transform: translateX(100%);
+      }
+
+      /*  text fill  */
+      .ulBox {
+        display: flex;
+        flex-direction: column;
+        align-items: start;
+        list-style-type: none;
+      }
+      .ulBox li {
+        padding: 6px 0;
+      }
+      .ulBox li a {
+        position: relative;
+        display: block;
+        padding: 4px 0;
+        font-family: Raleway, sans-serif;
+        font-size: 2em;
+        font-weight: 700;
+        text-decoration: none;
+        text-transform: uppercase;
+        -webkit-text-stroke: 2px var(--fill-color);
+        background: linear-gradient(
+          90deg,
+          var(--fill-color) 0%,
+          var(--fill-color) 100%
+        );
+        background-size: 0;
+        background-position: left;
+        background-repeat: no-repeat;
+        color: transparent;
+        -webkit-background-clip: text;
+        background-clip: text;
+        transition: 0.5s linear;
+      }
+      .ulBox li a:hover {
+        background-size: 100%;
+      }
+
+      /* menu css */
+      .shinchou-menu {
+        display: flex;
+        flex-direction: column;
+        list-style-type: none;
+      }
+
+      .shinchou-menu li {
+        margin: 6px;
+      }
+
+      .shinchou-menu li a {
+        position: relative;
+        display: inline-flex;
+        padding: 6px 2px 6px 2px;
+        color: #000;
+        font-size: 1.6em;
+        font-weight: 700;
+        line-height: 1;
+        text-decoration: none;
+        overflow: hidden;
+        background-color: #000;
+      }
+
+      .shinchou-menu li a:hover span {
+        color: white !important;
+        text-shadow: 0 0 10px var(--highlight-text-color);
+      }
+
+      .shinchou-menu li span {
+        position: relative;
+        margin: 0 5px 0 4px;
+        transition: 0.3s;
+        padding: 3px;
+      }
+      .shinchou-menu li span.highlight {
+        background-color: var(--highlight-text-color);
+      }
+
+      .shinchou-menu li span:not(.highlight) {
+        color: var(--highlight-text-color);
+      }
+
+      /* reveal text */
+      .reveal {
+        position: relative;
+        display: flex;
+        color: #6ee1f5;
+        font-size: 2em;
+        font-family: Raleway, sans-serif;
+        letter-spacing: 3px;
+        text-transform: uppercase;
+        white-space: pre;
+      }
+      .reveal span {
+        opacity: 0;
+        transform: scale(0);
+        animation: fadeIn 2.4s forwards;
+      }
+      .reveal::before,
+      .reveal::after {
+        position: absolute;
+        content: '';
+        top: 0;
+        bottom: 0;
+        width: 2px;
+        height: 100%;
+        background: white;
+        opacity: 0;
+        transform: scale(0);
+      }
+      .reveal::before {
+        left: 50%;
+        animation: slideLeft 1.5s cubic-bezier(0.7, -0.6, 0.3, 1.5) forwards;
+      }
+
+      .reveal::after {
+        right: 50%;
+        animation: slideRight 1.5s cubic-bezier(0.7, -0.6, 0.3, 1.5) forwards;
+      }
+      @keyframes fadeIn {
+        to {
+          opacity: 1;
+          transform: scale(1);
+        }
+      }
+
+      @keyframes slideLeft {
+        to {
+          left: -6%;
+          opacity: 1;
+          transform: scale(0.9);
+        }
+      }
+
+      @keyframes slideRight {
+        to {
+          right: -6%;
+          opacity: 1;
+          transform: scale(0.9);
+        }
+      }
+
+      /* todo-list */
+      .todo-list {
+        display: flex;
+        flex-direction: column;
+        padding: 0 75px 10px 30px;
+        background: #162740;
+        border: transparent;
+      }
+      .todo-list__title {
+        padding: 3px 6px;
+        color: #f1faee;
+        background-color: #264456;
+      }
+      .todo-list__label {
+        display: flex;
+        align-items: center;
+        margin: 40px 0;
+        font-size: 24px;
+        font-family: Lato, sans-serif;
+        color: #f1faee;
+        cursor: pointer;
+      }
+
+      .todo-list__label input[type='checkbox'] {
+        opacity: 0;
+        appearance: none;
+      }
+      .todo-list__label input[type='checkbox'] + .check {
+        position: absolute;
+        width: 25px;
+        height: 25px;
+        border: 2px solid #f1faee;
+        transition: 0.2s;
+      }
+      .todo-list__label input[type='checkbox']:checked + .check {
+        width: 25px;
+        height: 15px;
+        border-top: transparent;
+        border-right: transparent;
+        transform: rotate(-45deg);
+      }
+      .todo-list__label input[type='checkbox'] ~ span {
+        position: relative;
+        left: 40px;
+        white-space: nowrap;
+        transition: 0.5s;
+      }
+      .todo-list__label input[type='checkbox']:checked ~ span {
+        color: #585b57;
+        /* text-decoration: line-through; */
+      }
+      .todo-list__label input[type='checkbox'] ~ span::before {
+        position: absolute;
+        content: '';
+        top: 50%;
+        left: 0;
+        width: 100%;
+        height: 1px;
+        background: #f1faee;
+        transform: scaleX(0);
+        transition: transform 0.5s;
+      }
+      .todo-list__label input[type='checkbox']:checked ~ span::before {
+        transform: scaleX(1);
+        transform-origin: left;
+      }
+
+      /* navtab */
+      .navtab {
+        --navtab-width: 600px;
+        --navtab-item-width: calc(var(--navtab-width) / 4 - 20px);
+        --navtab-overlay-width: calc(var(--navtab-item-width) + 80px);
+        --active-index: 0;
+
+        position: relative;
+        width: var(--navtab-width);
+        height: 150px;
+        background: white;
+        border: 1em solid white;
+        border-radius: 5% 5% 15% 15% / 15% 15% 50% 50%;
+        overflow: hidden;
+      }
+      .navtab::before {
+        position: absolute;
+        content: '';
+        top: 0;
+        left: 0;
+        height: 100%;
+        width: var(--navtab-overlay-width);
+        background: #b3e5fc;
+        border-radius: 20px;
+        transform: translateX(
+          calc(var(--navtab-item-width) * var(--active-index))
+        );
+        transition: 0.5s ease;
+      }
+      .navtab ul {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        height: 100%;
+        list-style-type: none;
+      }
+      .navtab li.navtab-item {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 2;
+        flex-direction: column;
+        width: var(--navtab-item-width);
+        height: 100%;
+        color: #0288d1;
+        cursor: pointer;
+        transition: 0.5s ease;
+      }
+      .navtab li.navtab-item span {
+        font-size: 20px;
+        user-select: none;
+        transition: 0.5s ease;
+      }
+      .navtab li.navtab-item.active {
+        width: var(--navtab-overlay-width);
+      }
+      /* burger-menu */
+      .burger-menu {
+        position: relative;
+        z-index: 2;
+        width: 10em;
+        height: 10em;
+        background: #222;
+        border: solid 2px black;
+        border-radius: 50%;
+        outline: none;
+        cursor: pointer;
+        transition: all 0.5s ease-in-out;
+      }
+      .burger-menu .line {
+        position: absolute;
+        left: 25%;
+        width: 50%;
+        height: 3px;
+        background: black;
+        overflow: hidden;
+        transition: all 0.5s ease;
+      }
+      .burger-menu .line::before {
+        position: absolute;
+        content: '';
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: lightblue;
+        transform: translateX(-100%);
+        transition: all 0.25s ease;
+        transition-delay: 0.1s;
+      }
+      .burger-menu .line:nth-child(2):before {
+        transition-delay: 0.2s;
+      }
+      .burger-menu .line:nth-child(3):before {
+        transition-delay: 0.3s;
+      }
+
+      .burger-menu .line:nth-child(1) {
+        top: 30%;
+      }
+      .burger-menu .line:nth-child(3) {
+        bottom: 30%;
+      }
+      .burger-menu:hover .line::before {
+        transform: translateX(0);
+      }
+      .burger-menu.active {
+        box-shadow: 0 0 0 1000px lightblue;
+      }
+
+      .burger-menu.active .line:nth-child(1) {
+        top: 50%;
+        transform: rotate(45deg);
+      }
+      .burger-menu.active .line:nth-child(2) {
+        transform: scaleX(0);
+      }
+
+      .burger-menu.active .line:nth-child(3) {
+        bottom: 50%;
+        transform: rotate(-45deg);
+      }
+      /* loading-moon */
+      .loading-moon {
+        position: relative;
+        width: 8em;
+        height: 8em;
+        background: #222;
+        border-radius: 50%;
+        box-shadow: inset 0.5em -0.5em crimson;
+        animation: spin 2s linear infinite;
+      }
+
+      .loading-moon::before,
+      .loading-moon::after {
+        position: absolute;
+        content: '';
+        width: 100%;
+        height: 100%;
+        background: inherit;
+        border-radius: inherit;
+        box-shadow: inherit;
+      }
+
+      .loading-moon::before {
+        filter: blur(5px);
+      }
+
+      .loading-moon::after {
+        filter: blur(10px);
+      }
+      @keyframes spin {
+        to {
+          transform: rotate(1turn);
+        }
+      }
+      /* neon */
+      .neon {
+        color: #cce7f8;
+        font-size: 2.5rem;
+        font-family: 'Pacifico', cursive;
+        text-transform: uppercase;
+        animation: shining 0.1s alternate infinite;
+      }
+
+      @keyframes shining {
+        from {
+          text-shadow: 0 0 6px rgba(182, 211, 207, 0.9),
+            0 0 30px rgba(182, 211, 207, 0.3), 0 0 12px rgba(15, 115, 223, 0.5),
+            0 0 21px rgba(15, 115, 223, 0.9), 0 0 34px rgba(15, 115, 223, 0.8),
+            0 0 54px rgba(15, 115, 223, 0.9);
+        }
+        to {
+          text-shadow: 0 0 6px rgba(182, 211, 207, 1),
+            0 0 30px rgba(182, 211, 207, 0.4), 0 0 12px rgba(15, 115, 223, 0.6),
+            0 0 22px rgba(15, 115, 223, 0.8), 0 0 38px rgba(15, 115, 223, 0.9),
+            0 0 60px rgba(15, 115, 223, 1);
+        }
+      }
+      /* clip-path */
+      .clipPath {
+        width: 200px;
+        height: 200px;
+        background-color: #939;
+        /* clip-path: inset(10% 30% 20%); */
+        /* clip-path: circle(50px at 50px 50px); */
+        /* clip-path: ellipse(30px 50px at 50px 50px); */
+        /* clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%); */
+        /*配合 border-radius 可以形成圆弧 */
+        border-radius: 50%;
+        animation: circle 4s linear infinite both;
+      }
+      @keyframes circle {
+        from {
+          clip-path: polygon(50% 50%, 0% 0%, 0% 0%);
+        }
+        25% {
+          clip-path: polygon(50% 50%, 0% 0%, 100% 0%);
+        }
+        25.000001% {
+          clip-path: polygon(50% 50%, 0% 0%, 100% 0%, 100% 0%);
+        }
+        50% {
+          clip-path: polygon(50% 50%, 0% 0%, 100% 0%, 100% 100%);
+        }
+        50.000001% {
+          clip-path: polygon(50% 50%, 0% 0%, 100% 0%, 100% 100%, 100% 100%);
+        }
+        75% {
+          clip-path: polygon(50% 50%, 0% 0%, 100% 0%, 100% 100%, 0% 100%);
+        }
+        75.000001% {
+          clip-path: polygon(
+            50% 50%,
+            0% 0%,
+            100% 0%,
+            100% 100%,
+            0% 100%,
+            0% 100%
+          );
+        }
+        to {
+          clip-path: polygon(
+            50% 50%,
+            0% 0%,
+            100% 0%,
+            100% 100%,
+            0% 100%,
+            0% 0%
+          );
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <button class="btn">
+      hover me
+    </button>
+
+    <ul class="ulBox">
+      <li><a href="#">surprise</a></li>
+      <li><a href="#">mother fuck</a></li>
+      <li><a href="#">holly shit</a></li>
+    </ul>
+
+    <ul class="shinchou-menu">
+      <li><a href="#">ニュース</a></li>
+      <li><a href="#">ストーリー</a></li>
+      <li><a href="#">スターフ＆キャスト</a></li>
+      <li><a href="#">キャラクター</a></li>
+      <li><a href="#">放送·配信情報</a></li>
+    </ul>
+
+    <div class="reveal">sword art online</div>
+
+    <form class="todo-list">
+      <fieldset class="todo-list">
+        <legend class="todo-list__title">My Special Todo List</legend>
+        <label class="todo-list__label">
+          <input type="checkbox" name="" />
+          <i class="check"></i>
+          <span>Make awesome CSS animation</span>
+        </label>
+        <label class="todo-list__label">
+          <input type="checkbox" name="" />
+          <i class="check"></i>
+          <span>Watch awesome bangumi</span>
+        </label>
+      </fieldset>
+    </form>
+
+    <nav class="navtab">
+      <ul>
+        <li class="navtab-item active">
+          <span>Home</span>
+        </li>
+        <li class="navtab-item">
+          <span>Explore</span>
+        </li>
+        <li class="navtab-item">
+          <span>Notification</span>
+        </li>
+        <li class="navtab-item">
+          <span>Profile</span>
+        </li>
+      </ul>
+    </nav>
+
+    <button class="burger-menu">
+      <div class="line"></div>
+      <div class="line"></div>
+      <div class="line"></div>
+    </button>
+
+    <div class="loading-moon"></div>
+
+    <div class="neon">fushigi no monogatari</div>
+
+    <div class="clipPath"></div>
+  </body>
+  <script>
+    /* menu css */
+    let shinchouMenuLinks = document.querySelectorAll('.shinchou-menu li a')
+    shinchouMenuLinks.forEach(link => {
+      let letters = link.textContent.split('')
+      link.textContent = ''
+      letters.forEach((letter, i) => {
+        let span = document.createElement('span')
+        span.textContent = letter
+        if (i < 2) {
+          span.className = 'highlight'
+        }
+        span.style.transitionDelay = `${i / 10}s`
+        link.append(span)
+      })
+    })
+    /* reveal text */
+    const delay = 0.3
+    const revalText = document.querySelector('.reveal')
+    const letters = revalText.textContent.split('')
+    revalText.textContent = ''
+    const middle = letters.filter(item => item !== '').length / 2
+    const fragment = document.createDocumentFragment()
+    letters.forEach((item, i) => {
+      const span = document.createElement('SPAN')
+      span.textContent = item
+      span.style.animationDelay = `${delay + Math.abs(i - middle) * 0.1}s`
+      fragment.append(span)
+    })
+    revalText.append(fragment)
+    /* navtab */
+    let navtab = document.querySelector('nav.navtab')
+    let navtabItems = document.querySelectorAll('li.navtab-item')
+    navtabItems.forEach((navtabItem, activeIndex) =>
+      navtabItem.addEventListener('click', () => {
+        navtabItems.forEach(navtabItem => navtabItem.classList.remove('active'))
+        navtabItem.classList.add('active')
+        navtab.style.setProperty('--active-index', `${activeIndex}`)
+      })
+    )
+    /* burger-menu */
+    let burgerMenu = document.querySelector('.burger-menu')
+    burgerMenu.addEventListener('click', () => {
+      burgerMenu.classList.toggle('active')
+    })
+  </script>
+</html>
