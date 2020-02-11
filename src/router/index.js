@@ -6,6 +6,7 @@ const ListView = () => import('@/views/listview.vue')
 const Table = () => import('@/views/table.vue')
 const Wave = () => import('@/views/wave.vue')
 const Battery = () => import('@/views/battery.vue')
+const Rendering = () => import('@/views/rendering.vue')
 Vue.use(VueRouter)
 
 var routes = [
@@ -33,6 +34,11 @@ var routes = [
     path: '/battery',
     name: 'battery',
     component: Battery
+  },
+  {
+    path: '/rendering',
+    name: 'rendering',
+    component: Rendering
   }
 ]
 
