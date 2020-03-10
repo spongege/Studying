@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>a.b.c.d</title>
+  </head>
+  <body>
+    <script>
+      /*  例子1:
+      var entry = {
+        a: {
+          b: {
+            c: {
+              dd: 'abcdd'
+            }
+          },
+          d: {
+            xx: 'adxx'
+          },
+          e: 'ae'
+        }
+      }
+
+      // 要求转换成如下对象
+      var output = {
+        'a.b.c.dd': 'abcdd',
+        'a.d.xx': 'adxx',
+        'a.e': 'ae'
+      } 
+      */
+
+      const entry = {
+        a: {
+          b: {
+            c: {
+              dd: 'abcdd'
+            }
+          },
+          d: {
+            xx: 'adxx'
+          },
+          e: 'ae'
+        }
+      }
+      // 正常实现
+      const flatObj = (obj, prefix = '', result = {}) => {
+        Object.keys(obj).forEach(item => {
+          let key = prefix ? prefix + '.' + item : item
+          if (Object.prototype.toString.call(obj[item]) === '[object Object]') {
+            flatObj(obj[item], key, result)
+          } else {
+            result[key] = obj[item]
+          }
+        })
+        return result
+      }
+      // 通过reduce实现
+      const flatObj1 = (obj, prefix = '') =>
+        Object.keys(obj).reduce((acc, cur, index) => {
+          const key = prefix ? prefix + '.' + cur : cur
+          Object.prototype.toString.call(obj[cur]) === '[object Object]'
+            ? (acc = { ...acc, ...flatObj(obj[cur], key) })
+            : (acc[key] = obj[cur])
+          return acc
+        }, {})
+      console.log(flatObj(entry))
+      console.log(flatObj1(entry))
+
+      //----------------------------------
+      /*  例子2:
+      var entry1 = {
+        'a.b.c.dd': 'abcdd',
+        'a.d.xx': 'adxx',
+        'a.e': 'ae'
+      }
+
+      // 要求转换成如下对象
+      var output1 = {
+        a: {
+          b: {
+            c: {
+              dd: 'abcdd'
+            }
+          },
+          d: {
+            xx: 'adxx'
+          },
+          e: 'ae'
+        }
+      }
+       */
+      const entry1 = {
+        'a.b.c.dd': 'abcdd',
+        'a.d.xx': 'adxx',
+        'a.e': 'ae',
+        'a.d.cc': 'adcc',
+        f: 'f'
+      }
+      const map = entry => {
+        /* 1、循环实现set方法 */
+        // const set = (obj, map, val) => {
+        //   if (map.length <= 1) return (obj[map[0]] = val)
+        //   obj[map[0]] = obj[map[0]] || {}
+        //   let temp = obj[map[0]]
+        //   for (let i = 1; i < map.length; i++) {
+        //     if (!temp[map[i]]) temp[map[i]] = i + 1 === map.length ? val : {}
+        //     temp = temp[map[i]]
+        //   }
+        // }
+
+        /* 2、利用reduce来实现set方法 */
+        const set = (obj, map, val) => {
+          map.reduce((acc, cur, ind, arr) => {
+            if (ind === arr.length - 1) return (acc[cur] = val), acc
+            acc[cur] = acc[cur] || {}
+            return acc[cur]
+          }, obj)
+        }
+        const result = {}
+        Object.keys(entry).forEach(item => {
+          const map = item.split('.')
+          set(result, map, entry[item])
+        })
+        return result
+      }
+      console.log(map(entry1))
+    </script>
+  </body>
+</html>
