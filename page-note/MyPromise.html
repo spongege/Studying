@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MyPromise</title>
+  </head>
+  <body>
+    <script>
+      // 一个贼基础的promise，暂时未实现then的链式调用
+      class MyPromise {
+        constructor(executor) {
+          this.status = 'pending'
+          this.result = ''
+          this.error = ''
+          this.onFulfilledCallbacks = []
+          this.onRejectedCallbacks = []
+          let resolve = result => {
+            if (this.status !== 'pending') return
+            setTimeout(() => {
+              this.status = 'resolve'
+              this.result = result
+              this.onFulfilledCallbacks.forEach(i => i(result))
+            }, 0)
+          }
+          let rejected = error => {
+            if (this.status !== 'pending') return
+            setTimeout(() => {
+              this.status = 'rejected'
+              this.error = error
+              this.onFulfilledCallbacks.forEach(i => i(error))
+            }, 0)
+          }
+
+          try {
+            executor(resolve, rejected)
+          } catch (error) {
+            rejected(error)
+          }
+        }
+        then(res, rej) {
+          this.onFulfilledCallbacks.push(res)
+          this.onRejectedCallbacks.push(rej)
+        }
+      }
+
+      let promise = new MyPromise((resolve, rejected) => {
+        setTimeout(() => {
+          resolve(123)
+        }, 1000)
+      })
+
+      promise.then(
+        function(value) {
+          console.log('value1', value)
+        },
+        function(error) {
+          console.log('error1', error)
+        }
+      )
+
+      promise.then(
+        function(value) {
+          console.log('value2', value)
+        },
+        function(error) {
+          console.log('error2', error)
+        }
+      )
+
+      // 实现 Promise.finally
+      Promise.prototype.finally = callback => {
+        // 先通过P缓存this.constructor，后面再通过P.resolve的方式调用的目的：是为了兼容那些自定义的Promise版本。比如说可以自己实现一个Promise叫MyPromise，像resolve和reject这些静态方法都是挂载在MyPromise上的。通过这样let P = this.constructor;写，兼容性更好
+        const P = this.constructor
+        return this.then(
+          // 用resolve方法原因：如果callback是个异步操作，返回promise呢？.所以希望等callback执行完再接着执行
+          res => P.resolve(callback()).then(() => res),
+          err => P.resolve(callback()).then(() =>{ throw err } )
+        )
+      }
+
+      // 实现 Promise.all
+      // promise.all虽然可以称为并发，依然是单线程的，和后端的并发实质性不一样.js的多线程并发可以借助cluster，各个子进程取到的结果统一返回给主进程进行管理，父子进程通讯机制与react父子组件通讯相似
+      Promise.prototype.all = promiseArrs =>
+        new Promise((resolve, reject) => {
+          const result = []
+          let num = 0
+          for (let i of promiseArrs) {
+            Promise.resolve(i).then(
+              res => {
+                result.push(res)
+                num++
+                num === promiseArrs.length && resolve(result)
+              },
+              err => reject(err)
+            )
+          }
+        })
+
+      // 实现 Promise.race
+      Promise.prototype.race = promiseArrs =>
+        new Promise((resolve, reject) =>
+          promiseArrs.forEach(p => Promise.resolve(p).then(resolve, reject))
+        )
+
+    </script>
+  </body>
+</html>
