@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>螺旋矩阵算法</title>
+  </head>
+  <body>
+    <script>
+      // 1.选坐标为(0,0),(1,1)…的点记为(start,start)，作为开始坐标,下一圈开始坐标为(start+1,start+1)；
+      // 2.判断是否进入下一圈(即是否打印完成)的条件是row > start * 2 && col > start * 2；
+      // 3.打印一圈的左上角坐标为(start,start)，右下角的坐标为(col-start-1,row-start-1)
+      // 4.根据一圈左上角和右下角坐标判断“从左到右”，“从上到下”，“从右到左”，“从下到上”需要打印的点。
+      function printMatrix(matrix) {
+        if (matrix == null || matrix[0].length == 0) {
+          return
+        }
+        var row = matrix.length
+        var col = matrix[0].length
+        var start = 0
+        var res = []
+        while (col > start * 2 && row > start * 2) {
+          var endx = col - 1 - start
+          var endy = row - 1 - start
+          //左到右一行
+          for (var i = start; i <= endx; i++) {
+            res.push(matrix[start][i])
+          }
+          //上到下一行
+          if (start < endy) {
+            for (var i = start + 1; i <= endy; i++) {
+              res.push(matrix[i][endx])
+            }
+          }
+          //右到左
+          if (start < endx && start < endy) {
+            for (var i = endx - 1; i >= start; i--) {
+              res.push(matrix[endy][i])
+            }
+          }
+          //下到上
+          if (start < endx && start < endy - 1) {
+            for (var i = endy - 1; i >= start + 1; i--) {
+              res.push(matrix[i][start])
+            }
+          }
+          start++
+        }
+        return res
+      }
+      const arr1 = [
+        [1, 2, 3, 4],
+        [5, 6, 7, 8],
+        [9, 10, 11, 12],
+        [13, 14, 15, 16]
+      ]
+      const arr2 = [
+        [1, 2, 3],
+        [4, 5, 6],
+        [7, 8, 9]
+      ]
+      console.log(printMatrix(arr1)) // [1, 2, 3, 4, 8, 12, 16, 15, 14, 13, 9, 5, 6, 7, 11, 10]
+      console.log(printMatrix(arr2)) // [1, 2, 3, 6, 9, 8, 7, 4, 5]
+    </script>
+  </body>
+</html>
