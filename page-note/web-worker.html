@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>web worker</title>
+  </head>
+  <body>
+    <!-- http://www.ruanyifeng.com/blog/2018/07/web-worker.html -->
+    <script>
+      const worker = new Worker('web-worker.js')
+      // 主线程调用worker.postMessage()方法，向 Worker 发消息。
+      worker.postMessage('hi,web-worker')
+      //主线程通过worker.onmessage指定监听函数，接收子线程发回来的消息。
+      worker.onmessage = e => {
+        // 事件对象的data属性可以获取 Worker 发来的数据
+        console.log(e.data)
+      }
+
+      
+      // // Worker 完成任务以后，主线程就可以把它关掉。
+      // worker.terminate();
+
+      console.log('主线程')
+    </script>
+  </body>
+</html>
