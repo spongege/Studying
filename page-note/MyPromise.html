@@ -75,20 +75,23 @@
         return this.then(
           // 用resolve方法原因：如果callback是个异步操作，返回promise呢？.所以希望等callback执行完再接着执行
           res => P.resolve(callback()).then(() => res),
-          err => P.resolve(callback()).then(() =>{ throw err } )
+          err =>
+            P.resolve(callback()).then(() => {
+              throw err
+            })
         )
       }
 
       // 实现 Promise.all
       // promise.all虽然可以称为并发，依然是单线程的，和后端的并发实质性不一样.js的多线程并发可以借助cluster，各个子进程取到的结果统一返回给主进程进行管理，父子进程通讯机制与react父子组件通讯相似
-      Promise.prototype.all = promiseArrs =>
+      Promise.all = promiseArrs =>
         new Promise((resolve, reject) => {
           const result = []
           let num = 0
-          for (let i of promiseArrs) {
-            Promise.resolve(i).then(
+          for (let i = 0; i < promiseArrs.length; i++) {
+            Promise.resolve(promiseArrs[i]).then(
               res => {
-                result.push(res)
+                result[i] = res
                 num++
                 num === promiseArrs.length && resolve(result)
               },
@@ -98,11 +101,36 @@
         })
 
       // 实现 Promise.race
-      Promise.prototype.race = promiseArrs =>
+      Promise.race = promiseArrs =>
         new Promise((resolve, reject) =>
           promiseArrs.forEach(p => Promise.resolve(p).then(resolve, reject))
         )
-
+      // 实现Promise.retry,作用是执行一个函数，如果不成功最多可以尝试 times 次。传参需要三个变量，所要执行的函数，尝试的次数以及延迟的时间
+      Promise.retry = (fn = () => {}, times = 1, delay = 100) =>
+        new Promise((resolve, reject) => {
+          const error = []
+          const temp = () => {
+            if (times === 0) return reject(error)
+            Promise.resolve(fn())
+              .then(resolve)
+              .catch(err => {
+                error.push(err)
+                times--
+                setTimeout(() => {
+                  temp()
+                }, 100)
+              })
+          }
+          temp()
+        })
+      // 将一个同步callback包装成promise形式
+      const promisify = (fn, context) => (...args) =>
+        new Promise((resolve, reject) => {
+          fn.apply(context, [
+            ...args,
+            (err, res) => (err ? reject(err) : resolve(res))
+          ])
+        })
     </script>
   </body>
 </html>
