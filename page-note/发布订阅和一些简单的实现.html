@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>发布订阅和一些简单的实现</title>
+  </head>
+  <body>
+    <script>
+      // 手动实现发布订阅
+      class EventEmitter {
+        constructor() {
+          this.event = Object.create(null)
+        }
+        $on(type, fn) {
+          // 暂时不考虑传过来的type为数组的情况
+          // if (Array.isArray(type)) {
+          //   type.forEach(item => {
+          //     this.$on(item, fn)
+          //   })
+          // } else {
+          ;(this.event[type] || (this.event[type] = [])).push(fn)
+          // }
+          return this
+        }
+        $emit(type, ...args) {
+          if (!this.event[type]) return
+          this.event[type].forEach(item => {
+            item.call(this, ...args)
+          })
+          return this
+        }
+        $off(type, fn) {
+          if (this.event[type]) {
+            this.event[type] = this.event[type].filter(item => {
+              return fn != item
+            })
+          }
+          return this
+        }
+        $once(type, fn) {
+          const once = (...args) => {
+            fn.call(this, ...args)
+            this.$off(type, once)
+          }
+          this.$on(type, once)
+          return this
+        }
+      }
+      let emiter = new EventEmitter()
+      function log1(...args) {
+        console.log(args)
+      }
+      // emiter
+      //   .$on('a', log1)
+      //   .$emit('a', 1, 2)
+      //   .$emit('a', 1, 2)
+      //   .$off('a', log1)
+      //   .$emit('a', 1, 2)
+      emiter
+        .$once('a', log1)
+        .$emit('a', 1, 2)
+        .$emit('a', 1, 2)
+
+      //手动实现bind
+      Function.prototype.bind = function(oThis) {
+        if (typeof this !== 'function') throw Error('调用者不是一个函数')
+        var args = Array.prototype.slice.call(arguments, 1)
+        var that = this
+        var loop = function() {}
+        var fn = function() {
+          return that.apply(
+            this instanceof fn ? this : oThis,
+            args.concat(Array.prototype.slice.call(arguments))
+          )
+        }
+        this.prototype && (loop.prototype = this.prototype)
+        fn.prototype = new loop()
+        return fn
+      }
+
+      // 手动实现call和apply
+      Function.prototype.myCall = function(obj) {
+        obj.fn = this
+        var args = []
+        for (var i = 1; i < arguments.length; i++) {
+          args.push('arguments[' + i + ']')
+        }
+        eval('obj.fn(' + args + ')')
+        delete obj.fn
+      }
+      Function.prototype.myapply = function(obj, arr) {
+        obj.fn = this
+        if (!arr) {
+          obj.fn()
+        } else {
+          var args = []
+          for (var i = 0; i < arr.length; i++) {
+            args.push('arr[' + i + ']')
+          }
+          eval('obj.fn(' + args + ')')
+        }
+
+        delete obj.fn
+      }
+
+      // 写一个函数，可以控制最大并发数
+      class ConcurrentPool {
+        constructor(max, taskArr) {
+          this.max = max
+          this.taskArr = taskArr
+          setTimeout(() => {
+            this.run()
+          }, 0)
+        }
+        run() {
+          if (this.taskArr.length == 0) return
+          const min = Math.min(this.max, this.taskArr.length)
+          for (let i = 0; i < min; i++) {
+            const task = this.taskArr.shift()
+            this.max--
+            Promise.resolve(task())
+              .then(res => {})
+              .catch(err => {})
+              .finally(() => {
+                this.max++
+                this.run()
+              })
+          }
+        }
+        addTask(task) {
+          this.taskArr.push(task)
+        }
+      }
+
+      //简单的深拷贝
+      // symbol作为key，不会被遍历到，所以stringify和parse是不行的
+      // 有环引用，stringify和parse也会报错
+      // 我们另外用getOwnPropertySymbols可以获取symbol key可以解决问题1，用集合记忆曾经遍历过的对象可以解决问题2
+      // 不考虑正则、函数等奇怪类型的拷贝
+      function deepClone(target, map = new Map()) {
+        if (target === null || typeof target !== 'object') return target
+        //循环引用
+        if (map.has(target)) return map.get(target)
+        let result = Array.isArray(target) ? [] : {}
+        map.set(target, result)
+        // 获取对象中所有的属性名（包含Symbol值）
+        let keys = Object.keys(target).concat(Object.ownPropertySymbols(target))
+        let len = keys.length
+        while (len--) {
+          result[keys[len]] = deepClone(target[keys[len]], map)
+        }
+        return result
+      }
+
+      // 实现filter
+      Array.prototype.filter = function(fn, context) {
+        if (typeof fn !== 'function') throw Error('fn')
+        const res = []
+        let arr = this
+        for (let i = 0; i < arr.length; i++) {
+          const temp = fn.call(context, arr[i], i, arr)
+          temp && res.push(arr[i])
+        }
+        return res
+      }
+
+      // 洗牌算法
+      function shuffle(arr) {
+        let current = arr.length
+        while (current > 0) {
+          const random = Math.floor(Math.random() * current)
+          current--
+          ;[arr[current], arr[random]] = [arr[random], arr[current]]
+        }
+        return arr
+      }
+    </script>
+  </body>
+</html>
