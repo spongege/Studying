@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>链表</title>
+  </head>
+  <body>
+    <script>
+      // 链表存储有序的元素集合，但不同于数组，链表中的元素在内存中并不是连续放置的。每个 元素由一个存储元素本身的节点和一个指向下一个元素的引用(也称指针或链接)组成。链表的一个好处在于，添加或移除元素的时候不需要移动其他元素，而要想访问链表中间的一个元素，需要从起点(表头)开始迭代列表直到找到所需的元素
+
+      // 链表节点
+      class Node {
+        constructor(element) {
+          this.element = element
+          this.next = null
+        }
+      }
+
+      // 链表
+      class LinkedList {
+        constructor() {
+          this.head = null
+          this.length = 0
+        }
+        // 追加元素
+        append(el) {
+          const node = new Node(el)
+          if (this.head === null) {
+            this.head = node
+          } else {
+            let current = this.head
+            while (current.next) current = current.next
+            current.next = node
+          }
+          this.length++
+          return this
+        }
+        // 任意位置插入元素
+        insert(pos, el) {
+          if (pos >= 0 && pos <= this.length) {
+            const node = new Node(el)
+            if (pos === 0) {
+              this.head = node
+            } else {
+              let current = this.head
+              let previous = null
+              let index = 0
+              while (index++ < pos) {
+                previous = current
+                current = current.next
+              }
+              previous.next = node
+              node.next = current
+            }
+            this.length++
+            return node
+          } else {
+            return false
+          }
+        }
+        // 移除指定位置元素，下标从0开始
+        removeAt(pos) {
+          if (pos >= 0 && pos < this.length) {
+            let current = this.head
+            let previous = null
+            let index = 0
+            if (pos === 0) {
+              this.head = current.next
+            } else {
+              while (index++ < pos) {
+                previous = current
+                current = current.next
+              }
+              previous.next = current.next
+            }
+            this.length--
+            return current.element
+          } else {
+            return null
+          }
+        }
+        // 寻找元素下标
+        findIndex(el) {
+          let current = this.head
+          let index = 0
+          while (current) {
+            if (current.element === el) {
+              return index
+            }
+            index++
+            current = current.next
+          }
+          return -1
+        }
+        // 删除指定元素
+        remove(element) {
+          const index = this.findIndex(element)
+          return this.removeAt(index)
+        }
+        isEmpty() {
+          return !this.length
+        }
+        get size() {
+          return this.length
+        }
+        // 转为字符串
+        toString() {
+          let current = this.head
+          let string = ''
+          while (current) {
+            string += ` ${current.element}`
+            current = current.next
+          }
+          return string
+        }
+      }
+
+      // 链表的使用
+      const linkedList = new LinkedList()
+      linkedList.append(0)
+      linkedList.append(1)
+      linkedList.append(2)
+      linkedList.append(3)
+
+      linkedList.insert(3, 4)
+      console.log(linkedList)
+      console.log(linkedList.findIndex(4))
+    </script>
+  </body>
+</html>

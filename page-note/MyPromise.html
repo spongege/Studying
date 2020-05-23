@@ -106,7 +106,7 @@
           promiseArrs.forEach(p => Promise.resolve(p).then(resolve, reject))
         )
       // 实现Promise.retry,作用是执行一个函数，如果不成功最多可以尝试 times 次。传参需要三个变量，所要执行的函数，尝试的次数以及延迟的时间
-      Promise.retry = (fn = () => {}, times = 1, delay = 100) =>
+      Promise.retry = (fn = () => {}, times = 1, wait = 100) =>
         new Promise((resolve, reject) => {
           const error = []
           const temp = () => {
@@ -118,7 +118,7 @@
                 times--
                 setTimeout(() => {
                   temp()
-                }, 100)
+                }, wait)
               })
           }
           temp()
