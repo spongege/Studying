@@ -30,23 +30,59 @@
 6、结合 Web Components 构建 
 */
 
-// 实现一个plugin
-// 一个 JavaScript 命名函数。
-function MyExampleWebpackPlugin() {}
+/* webpack简单原理
+读取文件分析模块依赖
+对模块进行解析执行(深度遍历)
+针对不同的模块使用相应的loader
+编译模块，生成抽象语法树AST。
+循环遍历AST树，拼接输出js。
+ */
 
-// 在插件函数的 prototype 上定义一个 `apply` 方法。
-MyExampleWebpackPlugin.prototype.apply = function(compiler) {
-  // 指定一个挂载到 webpack 自身的事件钩子。
-  compiler.plugin('webpacksEventHook', function(
-    compilation /* 处理 webpack 内部实例的特定数据。*/,
-    callback
-  ) {
-    console.log('This is an example plugin!!!')
-
-    // 功能完成后调用 webpack 提供的回调。
-    callback()
-  })
+ /*
+ loader原理
+在解析对于文件，会自动去调用响应的loaderloader 本质上是一个函数，输入参数是一个字符串，输出参数也是一个字符串。当然，输出的参数会被当成是 JS 代码，从而被 esprima 解析成 AST，触发进一步的依赖解析。webpack会按照从右到左的顺序执行loader。
+ */
+// 实现一个plugin  vue-route-webpack-plugin
+class HelloPlugin {
+  // 在构造函数中获取用户给该插件传入的配置
+  constructor(options) {}
+  // Webpack 会调用 HelloPlugin 实例的 apply 方法给插件实例传入 compiler 对象
+  apply(compiler) {
+    // 在emit阶段插入钩子函数，用于特定时机处理额外的逻辑；（emit处可以更换为不同的hooks，比如afterPlugins）
+    compiler.hooks.emit.tap('HelloPlugin', compilation => {
+      // 在功能流程完成后可以调用 webpack 提供的回调函数；
+    })
+    // 如果事件是异步的，会带两个参数，第二个参数为回调函数，在插件处理完任务时需要调用回调函数通知webpack，才会进入下一个处理流程。
+    compiler.plugin('emit', function(compilation, callback) {
+      // 支持处理逻辑
+      // 处理完毕后执行 callback 以通知 Webpack
+      // 如果不执行 callback，运行流程将会一直卡在这不往下执行
+      callback()
+    })
+  }
 }
+//安装插件时, 只需要将它的一个实例放到Webpack config plugins 数组里面:
+var webpackConfig = {
+  plugins: [new HelloPlugin({ options: true })]
+}
+// ------------------------------------------------------------------------------
+
+/*https
+1. 浏览器请求建立SSL链接，并向服务端发送一个随机数–Client random 和客户端支持的加密方法，比如RSA加密，此时是明文传输。 
+2. 服务端从中选出一组加密算法与Hash算法，回复一个随机数–Server random，并将自己的身份信息以证书的形式发回给浏览器
+（证书里包含了网站地址，非对称加密的公钥，以及证书颁发机构等信息）
+3. 浏览器收到服务端的证书后
+    - 验证证书的合法性（颁发机构是否合法，证书中包含的网址是否和正在访问的一样），如果证书信任，则浏览器会显示一个小锁头，否则会有提示
+    - 用户接收证书后（不管信不信任），浏览会生产新的随机数–Premaster secret，然后证书中的公钥以及指定的加密方法加密`Premaster secret`，发送给服务器。
+    - 利用Client random、Server random和Premaster secret通过一定的算法生成HTTP链接数据传输的对称加密key-`session key`
+    - 使用约定好的HASH算法计算握手消息，并使用生成的`session key`对消息进行加密，最后将之前生成的所有信息发送给服务端。 
+4. 服务端收到浏览器的回复
+    - 利用已知的加解密方式与自己的私钥进行解密，获取`Premaster secret`
+    - 和浏览器相同规则生成`session key`
+    - 使用`session key`解密浏览器发来的握手消息，并验证Hash是否与浏览器发来的一致
+    - 使用`session key`加密一段握手消息，发送给浏览器
+5. 浏览器解密并计算握手消息的HASH，如果与服务端发来的HASH一致，此时握手过程结束， 
+*/
 
 // 观察者
 var subject = {
