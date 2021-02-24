@@ -219,7 +219,7 @@ function deepClone(target, map = new Map()) {
   let result = Array.isArray(target) ? [] : {}
   map.set(target, result)
   // 获取对象中所有的属性名（包含Symbol值）
-  let keys = Object.keys(target).concat(Object.ownPropertySymbols(target))
+  let keys = Object.keys(target).concat(Object.getOwnPropertySymbols(target))
   let len = keys.length
   while (len--) {
     result[keys[len]] = deepClone(target[keys[len]], map)
